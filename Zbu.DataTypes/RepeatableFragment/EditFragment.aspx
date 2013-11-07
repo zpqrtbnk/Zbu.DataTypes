@@ -1,4 +1,4 @@
-<%@ Page Title="Edit content" Language="c#" MasterPageFile="masterpages/umbracoPage.Master"
+<%@ Page Title="Edit content" Language="c#" MasterPageFile="../../../masterpages/umbracoPage.Master"
     CodeBehind="EditFragment.aspx.cs" ValidateRequest="false" AutoEventWireup="True"
     Inherits="Zbu.DataTypes.RepeatableFragment.EditFragment" Trace="false" %>
 

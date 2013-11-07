@@ -40,12 +40,25 @@ namespace Zbu.DataTypes.RepeatableFragment
             //_document = new Document(content);
             //_contentId = id;
 
-            var contentTypeAlias = Request.QueryString["ctype"];
-            if (!string.IsNullOrWhiteSpace(contentTypeAlias))
+            var json = Request.QueryString["json"];
+            Fragment fragment = null;
+            if (!string.IsNullOrWhiteSpace(json))
             {
-                _contentType = ApplicationContext.Current.Services.ContentTypeService.GetContentType(contentTypeAlias);
+                var serializer = new JsonSerializer();
+                fragment = serializer.Deserialize<Fragment>(json);
+                var contentTypeAlias = fragment.FragmentTypeAlias;
+                if (!string.IsNullOrWhiteSpace(contentTypeAlias))
+                {
+                    _contentType = ApplicationContext.Current.Services.ContentTypeService.GetContentType(contentTypeAlias);
+                }
             }
-            if (_contentType == null)
+
+            //var contentTypeAlias = Request.QueryString["ctype"];
+            //if (!string.IsNullOrWhiteSpace(contentTypeAlias))
+            //{
+            //    _contentType = ApplicationContext.Current.Services.ContentTypeService.GetContentType(contentTypeAlias);
+            //}
+            if (_contentType == null || fragment == null) // redundant but pleases Resharper
             {
                 this.DisplayFatalError("Invalid query string (missing or invalid fragment type alias)");
                 return;
@@ -54,7 +67,7 @@ namespace Zbu.DataTypes.RepeatableFragment
             //// we need to check if there's a published version of this document
             //_documentHasPublishedVersion = _document.Content.HasPublishedVersion();
 
-            _control = new umbraco.controls.FragmentControl(_content, _contentType, "TabView1")
+            _control = new umbraco.controls.FragmentControl(_content, _contentType, fragment.Values)
             {
                 ID = "TabView1",
                 Width = Unit.Pixel(666),
@@ -103,8 +116,16 @@ namespace Zbu.DataTypes.RepeatableFragment
                 }
             }
 
-            PostBackJs.Text = string.Format("<script type=\"text/javascript\">parent.{0}('{1}');</script>",
-                Request.QueryString["cb"], _control.GetJson().Replace("'", "\\'"));
+            var serializer = new JsonSerializer();
+            var fragment = new Fragment
+            {
+                FragmentTypeAlias = _contentType.Alias,
+                Values = _control.Values
+            };
+            var json = serializer.Serialize(fragment).Replace("\r", "").Replace("\n", " ");
+
+            PostBackJs.Text = string.Format("<script type=\"text/javascript\">UmbClientMgr.closeModalWindow('{0}');</script>",
+                json.Replace("'", "\\'"));
         }
 
         private void ShowUserValidationError(string message)
