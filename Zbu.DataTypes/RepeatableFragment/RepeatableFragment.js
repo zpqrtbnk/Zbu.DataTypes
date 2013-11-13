@@ -43,28 +43,80 @@
         var thisId = $this.attr('id');
         thisId = thisId.substr(0, thisId.length - '_edit'.length);
 
-        var addButton = $(this).find('a');
-        addButton.css('color', 'green');
+        var count = 0;
+        var editing = -1;
 
         function updateFragment(value) {
-            if (value.outVal)
-                $('#' + thisId + '_data').val(value.outVal);
+            if (value.outVal && editing >= 0)
+                $('#' + thisId + '_' + editing).val(value.outVal);
+            editing = -1;
+        }
+        
+        function addFragment(data) {
+            var index = count++;
+
+            // add the index to the list
+            var idx = $('#' + thisId + '_idx');
+            idx.val(idx.val() + index + ',');            
+
+            var fragmentHtml = '<div class="zbu-fragment">'
+                + '<input type="hidden" id="' + thisId + '_' + index + '" name="' + thisId + '_' + index + '" value="" />'
+                + '<a href="#" class="zbu-fragment-remove">remove</a>'
+                + '<a href="#" class="zbu-fragment-edit">edit</a>'
+                + '<div class="zbu-fragment-head">Blah</div>' // FIXME title management
+                + '</div>';
+            
+            // create the fragment and set its data value
+            var fragment = $(fragmentHtml);
+            fragment.appendTo($this.find('.zbu-fragments'));
+            fragment.disableSelection();
+            $('#' + thisId + '_' + index).val(data);
+
+            // plug the edit button
+            fragment.find('a.zbu-fragment-edit').click(function(event) {
+                editing = index;
+                // url, title, showHeader, width, height, top, left, closeTriggers, onCloseCallback
+                UmbClientMgr.openModalWindow(args.umbraco + '/plugins/Zbu/RepeatableFragment/EditFragment.aspx'
+                    + '?id=' + args.contentId
+                    + '&fragment=' + encodeURIComponent($('#' + thisId + '_' + index).val()),
+                    'Edit fragment', true, 800, 680, 10, 0, '', updateFragment);
+                event.preventDefault();
+            });
+
+            // plug the remove button
+            fragment.find('a.zbu-fragment-remove').click(function (event) {
+
+                var idx = $('#' + thisId + '_idx');
+                idx.val(idx.val().replace('' + index + ',', ''));
+
+                fragment.remove();
+                event.preventDefault();
+            });
         }
 
-        //var value = $('#' + thisId + '_data').val();
-        //if (value)
-        //    value = value.trim();
-        //if (!value)
-        //    value = '{ "FragmentTypeAlias": "' + args.fragmentTypeAlias + '" }';
-        //$('#' + thisId + '_data').val(value);
+        // create initial fragments
+        for (var i = 0; i < args.fragments.length; i++)
+            addFragment(JSON.stringify(args.fragments[i]));
+        
+        // plug add button
+        $this.find('.zbu-fragments-add').click(function () {
+            addFragment(args.fragment);
+        });
 
-        $('#' + thisId + '_add').click(function () {
-            // url, title, showHeader, width, height, top, left, closeTriggers, onCloseCallback
-            UmbClientMgr.openModalWindow(args.umbraco + '/plugins/Zbu/RepeatableFragment/EditFragment.aspx'
-                + '?id=' + args.contentId
-                //+ '&ctype=' + args.fragmentTypeAlias
-                + '&json=' + encodeURIComponent($('#' + thisId + '_data').val()),
-                'Edit fragment', true, 800, 680, 10, 0, '', updateFragment);
+        // enable sorting of fragments
+        $this.find('.zbu-fragments').sortable({
+            items: '.zbu-fragment',
+            placeholder: 'zbu-sortable-placeholder',
+            forcePlaceholderSize: true,
+            update: function (event, ui) {
+                // update the list when order changes
+                var idx = ',';
+                var len = (thisId + '_').length;
+                $this.find('.zbu-fragment input:hidden').each(function() {
+                    idx += $(this).attr('id').substr(len) + ',';
+                });
+                $('#' + thisId + '_idx').val(idx);
+            }
         });
     });
 })(jQuery);

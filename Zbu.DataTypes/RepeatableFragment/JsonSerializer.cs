@@ -36,7 +36,11 @@ namespace Zbu.DataTypes.RepeatableFragment
 
         public string Serialize(object o)
         {
-            return JsonConvert.SerializeObject(o, Formatting.Indented, _settings);
+            _settings.TypeNameHandling = TypeNameHandling.None;
+
+            //var s = JsonConvert.SerializeObject(o, Formatting.Indented, _settings);
+            var s = JsonConvert.SerializeObject(o, Formatting.None, _settings);
+            return s;
         }
 
         public T Deserialize<T>(string s)

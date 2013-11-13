@@ -84,6 +84,7 @@
     <Content Include="RepeatableFragment\EditFragment.aspx">
       <SubType>ASPXCodeBehind</SubType>
     </Content>
+    <Content Include="RepeatableFragment\notes.txt" />
     <EmbeddedResource Include="RepeatableFragment\RepeatableFragment.css" />
     <EmbeddedResource Include="RepeatableFragment\RepeatableFragment.js" />
   </ItemGroup>

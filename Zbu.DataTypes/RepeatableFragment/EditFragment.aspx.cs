@@ -40,7 +40,7 @@ namespace Zbu.DataTypes.RepeatableFragment
             //_document = new Document(content);
             //_contentId = id;
 
-            var json = Request.QueryString["json"];
+            var json = Request.QueryString["fragment"];
             Fragment fragment = null;
             if (!string.IsNullOrWhiteSpace(json))
             {

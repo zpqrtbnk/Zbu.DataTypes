@@ -1,0 +1,4 @@
+﻿fix JS file, the ZBU plugin management should move somewhere else
+
+must handle the title / fragment content rendering - HOW?
+must create the property converter
