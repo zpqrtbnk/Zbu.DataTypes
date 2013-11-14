@@ -1,13 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Umbraco.Core.Models;
-using Umbraco.Core.PropertyEditors;
 using Umbraco.Core.Models.PublishedContent;
+using Umbraco.Core.PropertyEditors;
 
-namespace Zbu.DataTypes.RepeatableFragment
+namespace Zbu.DataTypes.RepeatableFragment.PropertyValueConverter
 {
     // FIXME no! we can cache the IPublishedContent, and their properties will NOT be cached?
     [PropertyValueCache(PropertyCacheValue.All, PropertyCacheLevel.Request)] // no idea what the inner types do

@@ -52,6 +52,7 @@
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Web" />
+    <Reference Include="System.Web.Mvc, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -73,8 +74,17 @@
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="RepeatableFragment\Fragment.cs" />
+    <Compile Include="RepeatableFragment\FragmentRendering\FragmentController.cs" />
+    <Compile Include="RepeatableFragment\FragmentRendering\FragmentRenderer2.cs" />
+    <Compile Include="RepeatableFragment\FragmentRendering\FragmentRenderingApplication.cs" />
+    <Compile Include="RepeatableFragment\FragmentRendering\FragmentVirtualFile.cs" />
+    <Compile Include="RepeatableFragment\FragmentRendering\FragmentVirtualPathProvider.cs" />
     <Compile Include="RepeatableFragment\JsonSerializer.cs" />
-    <Compile Include="RepeatableFragment\RepeatableFragmentConverter.cs" />
+    <Compile Include="RepeatableFragment\FragmentRendering\PublishedFragment.cs" />
+    <Compile Include="RepeatableFragment\FragmentRendering\PublishedProperty.cs" />
+    <Compile Include="RepeatableFragment\FragmentRendering\PublishedPropertyBase.cs" />
+    <Compile Include="RepeatableFragment\FragmentRendering\FragmentRenderer.cs" />
+    <Compile Include="RepeatableFragment\PropertyValueConverter\RepeatableFragmentConverter.cs" />
     <Compile Include="RepeatableFragment\RepeatableFragmentData.cs" />
     <Compile Include="RepeatableFragment\RepeatableFragmentDataType.cs" />
     <Compile Include="RepeatableFragment\RepeatableFragmentEditor.cs" />
@@ -88,6 +98,7 @@
     <EmbeddedResource Include="RepeatableFragment\RepeatableFragment.css" />
     <EmbeddedResource Include="RepeatableFragment\RepeatableFragment.js" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

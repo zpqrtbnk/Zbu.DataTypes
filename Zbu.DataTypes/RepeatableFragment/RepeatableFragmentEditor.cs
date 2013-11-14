@@ -5,6 +5,7 @@ using System.Web.UI.WebControls;
 using Umbraco.Core.IO;
 using umbraco.interfaces;
 using umbraco.editorControls;
+using Zbu.DataTypes.RepeatableFragment.FragmentRendering;
 
 [assembly: WebResource("Zbu.DataTypes.RepeatableFragment.RepeatableFragment.css", "text/css")]
 [assembly: WebResource("Zbu.DataTypes.RepeatableFragment.RepeatableFragment.js", "application/x-javascript")]
@@ -73,6 +74,9 @@ namespace Zbu.DataTypes.RepeatableFragment
         fragments: {4}
     }});
 </script>
+<!--
+{5}
+-->
 ";
 
             // get values
@@ -81,13 +85,19 @@ namespace Zbu.DataTypes.RepeatableFragment
             if (string.IsNullOrWhiteSpace(data)) data = "[]";
             var serializer = new JsonSerializer();
 
+            // fixme - tmp
+            var engine = new FragmentRenderer2();
+            var dataValues = serializer.Deserialize<Fragment[]>(data);
+            var rendered = engine.Render(dataValues[0].FragmentTypeAlias, dataValues[0].Values, "NOSCRIPT");
+
             // build the editor's html
             _panel.Controls.Add(new LiteralControl(string.Format(html,
                 ClientID,
                 IOHelper.ResolveUrl(SystemDirectories.Umbraco).Replace("'", "\\'"),
                 contentId,
                 serializer.Serialize(new Fragment { FragmentTypeAlias = _config.FragmentTypeAlias }).Replace("'", "\\'"),
-                data)));
+                data,
+                rendered)));
 
             // reset the fragment ids (on postbacks)
             // the actual value will be initialized by JavaScript

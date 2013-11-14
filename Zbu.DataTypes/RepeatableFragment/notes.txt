@@ -1,4 +1,9 @@
 ﻿fix JS file, the ZBU plugin management should move somewhere else
 
 must handle the title / fragment content rendering - HOW?
+- started to do it
+- but the IPublishedContent should not initiailze from a IContent
+- but from the content type alias + set of properties
+
+
 must create the property converter
