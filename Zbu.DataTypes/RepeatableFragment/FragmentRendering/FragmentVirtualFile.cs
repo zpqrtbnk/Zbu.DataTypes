@@ -8,6 +8,15 @@ namespace Zbu.DataTypes.RepeatableFragment.FragmentRendering
 {
     class FragmentVirtualFile : VirtualFile
     {
+        private readonly byte[] _code;
+
+        public FragmentVirtualFile(string virtualPath, string code)
+            : base(virtualPath)
+        {
+            _code = Encoding.UTF8.GetBytes(code);
+        }
+
+        /*
         private readonly string _virtualPath;
 
         public FragmentVirtualFile(string virtualPath)
@@ -34,9 +43,11 @@ namespace Zbu.DataTypes.RepeatableFragment.FragmentRendering
 
             return resource;
         }
+        */
 
         public override Stream Open()
         {
+            /*
             // Always in format: "~/CMS/{0}.cshtml"
             var key = _virtualPath.Replace("~/Zbu.Fragment/", "").Replace(".cshtml", "");
 
@@ -47,10 +58,9 @@ namespace Zbu.DataTypes.RepeatableFragment.FragmentRendering
             //resource = String.Format("{0}{1}", "@inherits System.Web.Mvc.WebViewPage<dynamic>\r\n" +
             //                                   "@using System.Web.Mvc\r\n" +
             //                                   "@using System.Web.Mvc.Html\r\n", resource);
+            */
 
-            var bytes = Encoding.UTF8.GetBytes(resource);
-            var ms = new MemoryStream(bytes);
-            return ms;
+            return new MemoryStream(_code);
         }    
     }
 }

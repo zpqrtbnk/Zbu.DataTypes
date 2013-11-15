@@ -19,7 +19,7 @@ namespace Zbu.DataTypes.RepeatableFragment.FragmentRendering
         [ChildActionOnly]
         public PartialViewResult Index()
         {
-            return PartialView("~/Zbu.Fragment/" + _viewName, _content);
+            return PartialView(FragmentVirtualPathProvider.VirtualDir + _viewName + ".cshtml", _content);
         }
     }
 }

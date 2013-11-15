@@ -52,7 +52,7 @@
             editing = -1;
         }
         
-        function addFragment(data) {
+        function addFragment(data, html) {
             var index = count++;
 
             // add the index to the list
@@ -63,7 +63,8 @@
                 + '<input type="hidden" id="' + thisId + '_' + index + '" name="' + thisId + '_' + index + '" value="" />'
                 + '<a href="#" class="zbu-fragment-remove">remove</a>'
                 + '<a href="#" class="zbu-fragment-edit">edit</a>'
-                + '<div class="zbu-fragment-head">Blah</div>' // FIXME title management
+                + '<div class="zbu-fragment-head">Head?</div>' // FIXME title management
+                + '<div class="zbu-fragment-body">' + html + '</div>'
                 + '</div>';
             
             // create the fragment and set its data value
@@ -96,11 +97,11 @@
 
         // create initial fragments
         for (var i = 0; i < args.fragments.length; i++)
-            addFragment(JSON.stringify(args.fragments[i]));
+            addFragment(JSON.stringify(args.fragments[i]), args.fraghtml[i]);
         
         // plug add button
         $this.find('.zbu-fragments-add').click(function () {
-            addFragment(args.fragment);
+            addFragment(args.fragment, "&nbsp;");
         });
 
         // enable sorting of fragments

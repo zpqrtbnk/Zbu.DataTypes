@@ -11,9 +11,8 @@ namespace Zbu.DataTypes.RepeatableFragment.FragmentRendering
     {
         protected override void ApplicationInitialized(UmbracoApplicationBase umbracoApplication, ApplicationContext applicationContext)
         {
-            base.ApplicationInitialized(umbracoApplication, applicationContext);
-
             FragmentVirtualPathProvider.RegisterWithHostingEnvironment();
+            base.ApplicationInitialized(umbracoApplication, applicationContext);
         }
     }
 }

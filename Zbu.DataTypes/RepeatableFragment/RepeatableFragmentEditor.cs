@@ -14,16 +14,14 @@ namespace Zbu.DataTypes.RepeatableFragment
 {
     class RepeatableFragmentEditor : PlaceHolder, IDataEditor
     {
-        private readonly IData _data;
-        private readonly RepeatableFragmentPrevalueEditor.ConfigData _config;
+        private readonly RepeatableFragmentDataType _datatype;
 
         private HiddenField _formIds;
         private Panel _panel;
 
-        public RepeatableFragmentEditor(IData data, RepeatableFragmentPrevalueEditor.ConfigData config)
+        public RepeatableFragmentEditor(RepeatableFragmentDataType datatype)
         {
-            _data = data;
-            _config = config;
+            _datatype = datatype;            
         }
 
         protected override void OnInit(EventArgs e)
@@ -71,37 +69,50 @@ namespace Zbu.DataTypes.RepeatableFragment
         umbraco: '{1}',
         contentId: {2},
         fragment: '{3}',
-        fragments: {4}
+        fragments: {4},
+        fraghtml: [ {5} ]
     }});
 </script>
-<!--
-{5}
--->
 ";
 
             // get values
             var contentId = Page.Request.QueryString["id"];
-            var data = _data.Value as string;
-            if (string.IsNullOrWhiteSpace(data)) data = "[]";
-            var serializer = new JsonSerializer();
 
-            // fixme - tmp
-            var engine = new FragmentRenderer2();
-            var dataValues = serializer.Deserialize<Fragment[]>(data);
-            var rendered = engine.Render(dataValues[0].FragmentTypeAlias, dataValues[0].Values, "NOSCRIPT");
+            var data = _datatype.Data.Value as string;
+            if (string.IsNullOrWhiteSpace(data)) data = "[]";
+
+            var serializer = new JsonSerializer();
+            var fragments = serializer.Deserialize<Fragment[]>(data);
+            var fraghtml = new StringBuilder();
+            foreach (var fragment in fragments)
+            {
+                if (fraghtml.Length > 0)
+                    fraghtml.Append(", ");
+                var s = RenderFragment(fragment);
+                s = s.Replace("\r", "").Replace("\n", " ").Replace("'", "\\'");
+                fraghtml.AppendFormat("'{0}'", s);
+            }
 
             // build the editor's html
             _panel.Controls.Add(new LiteralControl(string.Format(html,
                 ClientID,
                 IOHelper.ResolveUrl(SystemDirectories.Umbraco).Replace("'", "\\'"),
                 contentId,
-                serializer.Serialize(new Fragment { FragmentTypeAlias = _config.FragmentTypeAlias }).Replace("'", "\\'"),
+                serializer.Serialize(new Fragment { FragmentTypeAlias = _datatype.Config.FragmentTypeAlias }).Replace("'", "\\'"),
                 data,
-                rendered)));
+                fraghtml)));
 
             // reset the fragment ids (on postbacks)
             // the actual value will be initialized by JavaScript
             _formIds.Value = ",";
+        }
+
+        private string RenderFragment(Fragment fragment)
+        {
+            var engine = new FragmentRenderer2();
+            var viewName = string.Format("FV{0}", _datatype.DataTypeDefinitionId);
+            FragmentVirtualPathProvider.SetFragmentView(viewName, _datatype.Config.FragmentViewCode);
+            return engine.Render(fragment.FragmentTypeAlias, fragment.Values, viewName);
         }
 
         public Control Editor
@@ -118,7 +129,7 @@ namespace Zbu.DataTypes.RepeatableFragment
                 if (data.Length > 0) data.Append(", ");
                 data.Append(Page.Request.Form[ClientID + "_" + id]);
             }
-            _data.Value = "[ " + data + " ]";
+            _datatype.Data.Value = "[ " + data + " ]";
         }
 
         public bool ShowLabel

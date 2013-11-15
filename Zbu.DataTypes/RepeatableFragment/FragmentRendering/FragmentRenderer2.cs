@@ -24,7 +24,7 @@ namespace Zbu.DataTypes.RepeatableFragment.FragmentRendering
             _umbracoContext = UmbracoContext.Current;
         }
 
-        public string Render(string contentTypeAlias, IDictionary<string, object> dataValues, string code)
+        public string Render(string contentTypeAlias, IDictionary<string, object> dataValues, string viewName)
         {
             var content = new PublishedFragment(contentTypeAlias, dataValues, true);
 
@@ -35,7 +35,7 @@ namespace Zbu.DataTypes.RepeatableFragment.FragmentRendering
 
             var request = new RequestContext(_httpContext, routeVals);
             string output;
-            using (var controller = new FragmentController("fixme", content)) // fixme
+            using (var controller = new FragmentController(viewName, content))
             {
                 controller.ControllerContext = new ControllerContext(request, controller);
                 var result = controller.Index();

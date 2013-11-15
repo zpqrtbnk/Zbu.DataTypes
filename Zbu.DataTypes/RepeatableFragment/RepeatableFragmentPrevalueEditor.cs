@@ -9,16 +9,18 @@ using System.Web.UI.WebControls;
 using umbraco.cms.businesslogic.datatype;
 using Umbraco.Core;
 using Umbraco.Core.Models;
+using umbraco.editorControls.SettingControls;
 using umbraco.interfaces;
 
 namespace Zbu.DataTypes.RepeatableFragment
 {
-    class RepeatableFragmentPrevalueEditor : PlaceHolder, IDataPrevalue
+    public class RepeatableFragmentPrevalueEditor : PlaceHolder, IDataPrevalue
     {
         private readonly BaseDataType _datatype;
         private ConfigData _config;
 
         private TextBox _alias;
+        private TextBox _code;
 
         public RepeatableFragmentPrevalueEditor(BaseDataType dataType)
         {
@@ -38,8 +40,15 @@ namespace Zbu.DataTypes.RepeatableFragment
             {
                 Text = Config.FragmentTypeAlias
             };
-
             Controls.Add(_alias);
+
+            _code = new TextBox
+            {
+               Text = Config.FragmentViewCode, 
+               TextMode = TextBoxMode.MultiLine,
+               Rows = 8               
+            };
+            Controls.Add(_code);
         }
 
         // this is somewhat ugly yet this is how it's done in most built-in editors
@@ -48,6 +57,9 @@ namespace Zbu.DataTypes.RepeatableFragment
             writer.WriteLine("<table>");
             writer.WriteLine("<tr><th>Fragment type alias</th><td>");
             _alias.RenderControl(writer);
+            writer.Write("</td></tr>");
+            writer.WriteLine("<tr><th>Fragment view code</th><td>");
+            _code.RenderControl(writer);
             writer.Write("</td></tr>");
             writer.Write("</table>");
         }
@@ -58,12 +70,14 @@ namespace Zbu.DataTypes.RepeatableFragment
 
             var config = Config;
             config.FragmentTypeAlias = _alias.Text;
+            config.FragmentViewCode = _code.Text;
             Config = config;
         }
 
         public class ConfigData
         {
             public string FragmentTypeAlias;
+            public string FragmentViewCode;
         }
 
         public ConfigData Config
@@ -80,11 +94,15 @@ namespace Zbu.DataTypes.RepeatableFragment
                     Umbraco.Core.Models.PreValue prevalue;
                     var fragmentTypeAlias = prevalues.TryGetValue("FragmentTypeAlias", out prevalue)
                         ? prevalue.Value
-                        : "";
+                        : string.Empty;
+                    var fragmentViewCode = prevalues.TryGetValue("FragmentViewCode", out prevalue)
+                        ? prevalue.Value
+                        : "@model IPublishedContent\r\n@using Umbraco.Web\r\n\r\n<span>?</span>";
 
                     _config = new ConfigData
                     {
-                        FragmentTypeAlias = fragmentTypeAlias
+                        FragmentTypeAlias = fragmentTypeAlias,
+                        FragmentViewCode = fragmentViewCode
                     };
                 }
                 return _config;
@@ -95,6 +113,7 @@ namespace Zbu.DataTypes.RepeatableFragment
 
                 var prevalues = new Dictionary<string, Umbraco.Core.Models.PreValue>();
                 prevalues["FragmentTypeAlias"] = new Umbraco.Core.Models.PreValue(id, value.FragmentTypeAlias);
+                prevalues["FragmentViewCode"] = new Umbraco.Core.Models.PreValue(id, value.FragmentViewCode);
 
                 ApplicationContext.Current.Services.DataTypeService.SavePreValues(id, prevalues);
             }

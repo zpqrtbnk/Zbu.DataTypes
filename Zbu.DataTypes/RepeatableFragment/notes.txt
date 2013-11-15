@@ -1,9 +1,13 @@
 ﻿fix JS file, the ZBU plugin management should move somewhere else
 
 must handle the title / fragment content rendering - HOW?
-- started to do it
-- but the IPublishedContent should not initiailze from a IContent
-- but from the content type alias + set of properties
+- prevalue editor, how-to properly handle the textarea style?
+- prevalue editor, how-to properly save content containing < and > etc?
+- THEN it is ok
+- still... need to figure out how to render the head? in the view code?
+
+- then, render for new (added) and modified fragments
+- should be OK?
 
 
 must create the property converter

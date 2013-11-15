@@ -18,7 +18,7 @@ namespace Zbu.DataTypes.RepeatableFragment
         private IDataPrevalue _prevalue;
         private RepeatableFragmentPrevalueEditor.ConfigData _config;
 
-        private RepeatableFragmentPrevalueEditor.ConfigData Config
+        public RepeatableFragmentPrevalueEditor.ConfigData Config
         {
             get { return _config ?? (_config = ((RepeatableFragmentPrevalueEditor)PrevalueEditor).Config); }
         }
@@ -30,7 +30,7 @@ namespace Zbu.DataTypes.RepeatableFragment
 
         public override IDataEditor DataEditor
         {
-            get { return _editor ?? (_editor = new RepeatableFragmentEditor(Data, Config)); }
+            get { return _editor ?? (_editor = new RepeatableFragmentEditor(this)); }
         }
 
         public override string DataTypeName
